@@ -9,14 +9,18 @@ export function Home(){
     //hooks - states
     const [endereco, setEndereco] = useState ({})
     const [cep, setCep] = useState ('')
+    const [estado, setEstado] = useState()
     //hooks - effect
 
         //chamada da API
     async function getCep () {
         try {
 
-            const promise = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-            setEndereco(promise.data)
+            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+            setEndereco(response.data)
+
+            const estado = await axios.get (`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${response.data.uf}`)
+            setEstado(estado.data.nome);
             
         } catch (e) {
             
@@ -24,6 +28,7 @@ export function Home(){
     }
     function clearCep () {
         setEndereco({})
+        setEstado()
     }
 
     return(
@@ -69,7 +74,7 @@ export function Home(){
                     <BoxInput
                         textLabel= "Estado:"
                         placeholder= "Estado..."
-                        fieldValue={endereco.uf}
+                        fieldValue={estado}
                         fieldWidth={70}
                     />
                 
